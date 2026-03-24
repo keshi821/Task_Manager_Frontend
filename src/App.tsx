@@ -35,12 +35,23 @@ function App() {
     fetchTasks();
   };
 
+  // Edit task title
+  const handleEdit = async (id: number, newTitle: string) => {
+    await updateTask(id, { title: newTitle });
+    fetchTasks();
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <h1>Task Manager</h1>
 
       <AddTask onAdd={handleAdd} />
-      <TaskList tasks={tasks} onDelete={handleDelete} onToggle={handleToggle} />
+      <TaskList 
+        tasks={tasks} 
+        onDelete={handleDelete} 
+        onToggle={handleToggle} 
+        onEdit={handleEdit} 
+      />
     </div>
   );
 }
