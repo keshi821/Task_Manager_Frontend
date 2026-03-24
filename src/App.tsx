@@ -1,24 +1,46 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import { Task } from './types/Task';
+import { getTasks, addTask, deleteTask, updateTask } from './services/api';
+import TaskList from './components/TaskList';
+import AddTask from './components/AddTask';
 
 function App() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  // Load tasks
+  const fetchTasks = async () => {
+    const res = await getTasks();
+    setTasks(res.data);
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  // Add task
+  const handleAdd = async (title: string) => {
+    await addTask({ title });
+    fetchTasks();
+  };
+
+  // Delete task
+  const handleDelete = async (id: number) => {
+    await deleteTask(id);
+    fetchTasks();
+  };
+
+  // Toggle complete
+  const handleToggle = async (id: number, completed: boolean) => {
+    await updateTask(id, { isCompleted: completed });
+    fetchTasks();
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: '20px' }}>
+      <h1>Task Manager</h1>
+
+      <AddTask onAdd={handleAdd} />
+      <TaskList tasks={tasks} onDelete={handleDelete} onToggle={handleToggle} />
     </div>
   );
 }
